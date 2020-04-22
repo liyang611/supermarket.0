@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+        <context:component-scan base-package="com.kgc.controller"/>
+    <mvc:annotation-driven>
+        <mvc:message-converters><!--消息转换器  转json过程中，将时间类型的数据转成String-->
+            <!--映射Jackson 2Http消息转换器-->
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="objectMapper">
+                    <bean class="com.fasterxml.jackson.databind.ObjectMapper">
+                        <property name="dateFormat">
+                            <bean class="java.text.SimpleDateFormat">
+                                <constructor-arg type="java.lang.String" value="yyyy-MM-dd" />
+                            </bean>
+
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+        <!--内部资源视图重新解决方案-->
+        <mvc:resources mapping="/statics/**" location="/statics/"/>
+        <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+            <property name="prefix" value="/WEB-INF/jsp/"/>
+            <property name="suffix" value=".jsp"/>
+        </bean>
+        <!--简单的映射异常解决程序-->
+        <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+            <property name="exceptionMappings">
+                <props>
+                    <prop key="java.lang.RuntimeException">error</prop>
+                </props>
+            </property>
+        </bean>
+    <!--<mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <mvc:mapping path="/longin"/>
+            <mvc:exclude-mapping path="/user/login"/>
+            <mvc:exclude-mapping path="/user/show"/>
+            <bean class="com.kgc.loginlntor.Loginlntercerceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+-->
+</beans>
